@@ -8,4 +8,4 @@ const ShortenedSchema: Schema = new mongoose.Schema({
   hits: { type: Number, default: 0 },
 })
 
-export const Shortened = mongoose.model<ShortenedURISchema>("shortend", ShortenedSchema)
+export const Shortened = mongoose.model<ShortenedURISchema>("short", ShortenedSchema)

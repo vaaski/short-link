@@ -1,11 +1,16 @@
 import type { ShortenedURISlim } from "../types/api"
 
 import Fastify from "fastify"
+import fastifyCors from "fastify-cors"
 import { connectDB } from "./db"
-import { isURI } from "./util"
+import { isURI } from "../util"
 import { create, find } from "./api"
 
 const fast = Fastify()
+fast.register(fastifyCors, {
+  // TODO
+  origin: true,
+})
 
 fast.post("/@/create", async (req, res) => {
   const { target, slug } = req.body as ShortenedURISlim
@@ -17,7 +22,7 @@ fast.post("/@/create", async (req, res) => {
     found = await find({ target })
   } else found = await find({ target, slug })
 
-  if (found) return res.code(302).send(found)
+  if (found) return res.code(200).send(found)
 
   try {
     return res.code(200).send(await create({ target, slug }))

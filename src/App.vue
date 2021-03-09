@@ -1,6 +1,6 @@
 <template>
-  <main class="flex">
-    <img src="/logo.svg" alt="shr.li logo" class="logo" />
+  <main class="h-full flex justify-center items-center flex-col dark:bg-dark-blue">
+    <img src="./assets/logo.svg" alt="shr.li logo" class="logo" width="500px" height="175.78125px" />
     <CreateShortened />
   </main>
 </template>
@@ -19,6 +19,7 @@ export default defineComponent({
 
 <style>
 main > .logo {
-  max-width: 500px;
+  width: 500px;
+  max-width: 90vw;
 }
 </style>
