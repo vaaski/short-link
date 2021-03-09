@@ -1,7 +1,7 @@
+.env
 node_modules
 lib
 .DS_Store
 dist
 dist-ssr
 *.local
-.env

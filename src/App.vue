@@ -1,27 +1,24 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <main class="flex">
+    <img src="/logo.svg" alt="shr.li logo" class="logo" />
+    <CreateShortened />
+  </main>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue"
-import HelloWorld from "./components/HelloWorld.vue"
+import CreateShortened from "./components/CreateShortened.vue"
 
 export default defineComponent({
   name: "App",
   components: {
-    HelloWorld,
+    CreateShortened,
   },
 })
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+main > .logo {
+  max-width: 500px;
 }
 </style>

@@ -23,9 +23,13 @@
     "lib/**/*"
   ],
   "dependencies": {
+    "fastify": "^3.13.0",
+    "mongoose": "^5.11.19",
+    "nanoid": "^3.1.20",
     "vue": "^3.0.5"
   },
   "devDependencies": {
+    "@types/mongoose": "^5.10.3",
     "@types/node": "^14.14.32",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
