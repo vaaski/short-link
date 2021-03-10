@@ -2,9 +2,11 @@ import type { ShortenedURISlim } from "../types/api"
 
 import Fastify from "fastify"
 import fastifyCors from "fastify-cors"
+import fastifyStatic from "fastify-static"
 import { connectDB } from "./db"
 import { isURI, slugReg } from "../util"
 import { create, find } from "./api"
+import { join } from "path"
 
 const fast = Fastify()
 fast.register(fastifyCors, {
@@ -32,20 +34,36 @@ fast.post("/@/create", async (req, res) => {
   }
 })
 
-fast.get("/*", async (req, rep) => {
+fast.addHook("onRequest", async (req, rep) => {
+  if (req.url === "/") return
+
   const slug = req.url.slice(1)
   const found = await find({ slug })
 
   if (found) return rep.redirect(307, found.target)
 
-  return rep.redirect(307, "/")
+  return
 })
 
-fast.get("/", async (_, rep) => {
-  rep.code(200).send("ok bro")
+fast.register(fastifyStatic, {
+  root: join(__dirname, "../dist"),
+  prefix: "/",
 })
 
-fast.listen(8000).then(async addr => {
+// fast.get("/*", async (req, rep) => {
+//   const slug = req.url.slice(1)
+//   const found = await find({ slug })
+
+//   if (found) return rep.redirect(307, found.target)
+
+//   return rep.redirect(307, "/")
+// })
+
+// fast.get("/", async (_, rep) => {
+//   rep.code(307).redirect("/shorten")
+// })
+
+fast.listen(process.env.BACKEND_PORT || 8000).then(async addr => {
   console.log(`listening on ${addr}`)
   try {
     await connectDB()

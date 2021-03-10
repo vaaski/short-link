@@ -13,11 +13,11 @@
   "scripts": {
     "dev": "concurrently npm:back:dev npm:front:dev",
     "start": "node -r dotenv/config lib/backend",
-    "build": "concurrently npm:back:build npm:front:build",
+    "build": "npm run back:build && npm run front:build",
     "back:build": "rimraf lib && tsc -p tsconfig.backend.json",
     "back:dev": "nodemon",
     "front:dev": "vite --port 8080",
-    "front:build": "vite build",
+    "front:build": "vite build --outDir lib/dist",
     "front:serve": "vite preview",
     "commit": "cz -S"
   },
@@ -27,6 +27,7 @@
   "dependencies": {
     "fastify": "^3.13.0",
     "fastify-cors": "^5.2.0",
+    "fastify-static": "^4.0.1",
     "ky": "^0.27.0",
     "mongoose": "^5.11.19",
     "nanoid": "^3.1.20",

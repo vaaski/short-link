@@ -48,13 +48,12 @@ import { isURI, slugReg } from "../../util"
 import UriInput from "./UriInput.vue"
 import LargeButton from "./LargeButton.vue"
 
-console.log(process.env.NODE_ENV)
 
 export default defineComponent({
   components: { UriInput, LargeButton },
   emits: ["shortened"],
   setup(_, { emit }) {
-    const APIURL = window.backendURL
+    const APIURL = process.env.NODE_ENV ? window.location.origin : "http://localhost:8000"
     const showCustomUrlField = ref(false)
     const longUrlField = ref("")
     const shortUrlField = ref("")
@@ -86,7 +85,7 @@ export default defineComponent({
         }
 
         const shortened = await ky.post(`${APIURL}/@/create`, { json, throwHttpErrors: false })
-        console.log(shortened)
+        console.log("shortened", shortened)
 
         if (shortened.status === 409) {
           errorText.value = "slug already in use"
@@ -96,8 +95,6 @@ export default defineComponent({
         emit("shortened", await shortened.json())
       }
     }
-
-    console.log(window.backendURL)
 
     return {
       showCustomUrlField,
