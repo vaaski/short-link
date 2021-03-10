@@ -29,7 +29,7 @@
     "fastify-cors": "^5.2.0",
     "fastify-static": "^4.0.1",
     "ky": "^0.27.0",
-    "mongoose": "^5.11.19",
+    "mongoose": "5.11.15",
     "nanoid": "^3.1.20",
     "vue": "^3.0.7"
   },
