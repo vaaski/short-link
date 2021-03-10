@@ -35,9 +35,9 @@ fast.get("/*", async (req, rep) => {
   const slug = req.url.slice(1)
   const found = await find({ slug })
 
-  if (found) return rep.redirect(301, found.target)
+  if (found) return rep.redirect(307, found.target)
 
-  return rep.redirect(301, "/")
+  return rep.redirect(307, "/")
 })
 
 fast.get("/", async (_, rep) => {

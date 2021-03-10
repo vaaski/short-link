@@ -9,10 +9,10 @@ export const find = async (
   query: Partial<ShortenedURI>
 ): Promise<false | ShortenedURISlim> => {
   try {
-    const found = await Shortened.findOne(query)
+    const found = await Shortened.findOneAndUpdate(query, { $inc: { hits: 1 } })
     if (found) {
-      const { slug, target } = found
-      return { slug, target }
+      const { slug, target, hits } = found
+      return { slug, target, hits }
     }
     return false
   } catch (err) {

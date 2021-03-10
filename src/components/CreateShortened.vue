@@ -10,10 +10,11 @@
               'text-red-600 dark:text-red-600 ring-red-600':
                 !longUrlValid && longUrlField.length,
             }"
+            @keydown.enter="shorten"
           />
           <button
             @click="paste"
-            class="paste bg-blue-700 text-white px-4 mx-2 rounded h-auto focus:outline-none focus:bg-blue-800 transition-colors ring-1 ring-blue-700 focus:ring-blue-800"
+            class="bg-main-accent text-white px-4 ml-2 rounded h-auto focus:outline-none focus:bg-off-accent transition-colors ring-1 ring-main-accent focus:ring-off-accent"
           >
             paste
           </button>
@@ -25,14 +26,15 @@
         >
           custom short url
         </button>
-        <uri-input v-model="shortUrlField" v-if="showCustomUrlField" placeholder="custom short url" />
+        <uri-input
+          v-model="shortUrlField"
+          v-if="showCustomUrlField"
+          placeholder="custom short url postfix"
+        />
       </div>
-      <button
-        class="block w-1/3 mx-auto py-3 my-3 bg-blue-700 text-white focus:bg-blue-800 shadow-md rounded transition-all focus:outline-none focus:shadow-2xl"
-        @click="shorten"
+      <LargeButton @click="shorten" :disabled="!longUrlValid || !longUrlField.length"
+        >shorten</LargeButton
       >
-        shorten
-      </button>
     </form>
   </div>
 </template>
@@ -42,10 +44,14 @@ import { computed, defineComponent, ref } from "vue"
 import ky from "ky"
 import { isURI } from "../../util"
 import UriInput from "./UriInput.vue"
+import LargeButton from "./LargeButton.vue"
+
+console.log(process.env.NODE_ENV)
 
 export default defineComponent({
-  components: { UriInput },
-  setup() {
+  components: { UriInput, LargeButton },
+  emits: ["shortened"],
+  setup(_, { emit }) {
     const APIURL = window.backendURL
     const showCustomUrlField = ref(false)
     const longUrlField = ref("")
@@ -64,11 +70,14 @@ export default defineComponent({
       e.preventDefault()
 
       if (longUrlField.value.length && longUrlValid) {
+        // TODO validate slug for spaces
         const json: Record<string, string> = { target: longUrlField.value }
 
         if (shortUrlField.value) json.slug = shortUrlField.value
 
-        console.log(await ky.post(`${APIURL}/@/create`, { json }).json())
+        // TODO show error visually
+        const shortened = await ky.post(`${APIURL}/@/create`, { json }).json()
+        emit("shortened", shortened)
       }
     }
 

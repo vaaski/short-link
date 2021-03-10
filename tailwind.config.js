@@ -5,12 +5,15 @@ module.exports = {
     extend: {
       colors: {
         "dark-blue": "#0d0d10",
+        "main-accent": "#0089D7",
+        "off-accent": "#005A8D",
       },
     },
   },
   variants: {
     extend: {
       margin: ["last"],
+      opacity: ["disabled"],
     },
   },
   plugins: [],
