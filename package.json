@@ -12,7 +12,9 @@
   "author": "vaaski <admin@vaa.ski>",
   "scripts": {
     "dev": "concurrently npm:back:dev npm:front:dev",
-    "back:build": "rimraf lib && tsc",
+    "start": "node -r dotenv/config lib/backend",
+    "build": "concurrently npm:back:build npm:front:build",
+    "back:build": "rimraf lib && tsc -p tsconfig.backend.json",
     "back:dev": "nodemon",
     "front:dev": "vite --port 8080",
     "front:build": "vite build",
