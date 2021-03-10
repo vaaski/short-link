@@ -24,13 +24,15 @@ export const find = async (
 export const create = async ({
   target,
   slug,
-}: ShortenedURISlim): Promise<ShortenedURISlim> => {
+}: ShortenedURISlim): Promise<ShortenedURISlim | false> => {
   if (!slug) {
     slug = nanoid(defaultLength)
 
     while (await find({ slug })) {
       slug = nanoid(defaultLength)
     }
+  } else {
+    if (await find({ slug })) return false
   }
 
   const created: ShortenedURI = { target, slug, created: new Date(), hits: 0 }

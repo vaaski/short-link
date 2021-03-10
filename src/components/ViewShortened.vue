@@ -23,7 +23,8 @@ export default defineComponent({
   },
   emits: ["shorten"],
   setup(props) {
-    const APIURL = process.env.NODE_ENV ? window.location.origin : "http://localhost:8000"
+    const APIURL =
+      process.env.NODE_ENV === "development" ? "http://localhost:8000" : window.location.origin
     const slug = ref(props.shortened.slug)
     const target = ref(props.shortened.target)
 

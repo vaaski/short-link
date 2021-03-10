@@ -8,3 +8,5 @@ export const isURI = (str: string): boolean => {
 }
 
 export const slugReg = /[^a-z0-9]/gi
+
+export const disallowedSlugs = ["", "@/create"]

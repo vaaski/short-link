@@ -4,7 +4,7 @@ import Fastify from "fastify"
 import fastifyCors from "fastify-cors"
 import fastifyStatic from "fastify-static"
 import { connectDB } from "./db"
-import { isURI, slugReg } from "../util"
+import { disallowedSlugs, isURI, slugReg } from "../util"
 import { create, find } from "./api"
 import { join } from "path"
 
@@ -28,40 +28,31 @@ fast.post("/@/create", async (req, res) => {
   if (found) return res.code(200).send(found)
 
   try {
-    return res.code(200).send(await create({ target, slug }))
+    const success = await create({ target, slug })
+    if (!success) throw new Error()
+
+    return res.code(200).send(success)
   } catch (err) {
-    if (err.code === 11000) return res.code(409).send("slug in use")
+    return res.code(409).send("slug already in use maybe")
   }
 })
 
 fast.addHook("onRequest", async (req, rep) => {
-  if (req.url === "/") return
+  if (disallowedSlugs.includes(req.url.slice(1)) || req.url.startsWith("/assets/")) return
 
   const slug = req.url.slice(1)
   const found = await find({ slug })
 
+  console.log("found", found, "route", req.url)
   if (found) return rep.redirect(307, found.target)
 
-  return
+  return rep.redirect(307, "/")
 })
 
 fast.register(fastifyStatic, {
   root: join(__dirname, "../dist"),
   prefix: "/",
 })
-
-// fast.get("/*", async (req, rep) => {
-//   const slug = req.url.slice(1)
-//   const found = await find({ slug })
-
-//   if (found) return rep.redirect(307, found.target)
-
-//   return rep.redirect(307, "/")
-// })
-
-// fast.get("/", async (_, rep) => {
-//   rep.code(307).redirect("/shorten")
-// })
 
 fast.listen(process.env.BACKEND_PORT || 8000).then(async addr => {
   console.log(`listening on ${addr}`)
