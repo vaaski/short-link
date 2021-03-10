@@ -44,7 +44,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue"
 import ky from "ky"
-import { isURI, slugReg } from "../../util"
+import { disallowedSlugs, isURI, slugReg } from "../../util"
 import UriInput from "./UriInput.vue"
 import LargeButton from "./LargeButton.vue"
 
@@ -79,6 +79,10 @@ export default defineComponent({
         if (shortUrlField.value) {
           if (shortUrlField.value.match(slugReg)) {
             errorText.value = "please only use letters, numbers, - and _ as postfix."
+            return
+          }
+          if (disallowedSlugs.includes(shortUrlField.value)) {
+            errorText.value = `postfix ${shortUrlField.value} not allowed.`
             return
           }
           json.slug = shortUrlField.value
