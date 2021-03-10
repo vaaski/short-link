@@ -6,3 +6,5 @@ export const isURI = (str: string): boolean => {
     return false
   }
 }
+
+export const slugReg = /[^a-z0-9]/gi

@@ -30,11 +30,13 @@
           v-model="shortUrlField"
           v-if="showCustomUrlField"
           placeholder="custom short url postfix"
+          @keydown.enter="shorten"
         />
       </div>
-      <LargeButton @click="shorten" :disabled="!longUrlValid || !longUrlField.length"
-        >shorten</LargeButton
-      >
+      <LargeButton @click="shorten" :disabled="!longUrlValid || !longUrlField.length">
+        shorten
+      </LargeButton>
+      <span v-if="errorText" class="text-red-600 text-sm">{{ errorText }}</span>
     </form>
   </div>
 </template>
@@ -42,7 +44,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue"
 import ky from "ky"
-import { isURI } from "../../util"
+import { isURI, slugReg } from "../../util"
 import UriInput from "./UriInput.vue"
 import LargeButton from "./LargeButton.vue"
 
@@ -56,6 +58,8 @@ export default defineComponent({
     const showCustomUrlField = ref(false)
     const longUrlField = ref("")
     const shortUrlField = ref("")
+    const errorText = ref("")
+
     const enableCustomUrl = (e: MouseEvent) => {
       e.preventDefault()
       showCustomUrlField.value = true
@@ -68,16 +72,28 @@ export default defineComponent({
     const longUrlValid = computed(() => isURI(longUrlField.value))
     const shorten = async (e: MouseEvent) => {
       e.preventDefault()
+      errorText.value = ""
 
       if (longUrlField.value.length && longUrlValid) {
-        // TODO validate slug for spaces
         const json: Record<string, string> = { target: longUrlField.value }
 
-        if (shortUrlField.value) json.slug = shortUrlField.value
+        if (shortUrlField.value) {
+          if (shortUrlField.value.match(slugReg)) {
+            errorText.value = "please only use letters, numbers, - and _ as postfix."
+            return
+          }
+          json.slug = shortUrlField.value
+        }
 
-        // TODO show error visually
-        const shortened = await ky.post(`${APIURL}/@/create`, { json }).json()
-        emit("shortened", shortened)
+        const shortened = await ky.post(`${APIURL}/@/create`, { json, throwHttpErrors: false })
+        console.log(shortened)
+
+        if (shortened.status === 409) {
+          errorText.value = "slug already in use"
+          return
+        }
+
+        emit("shortened", await shortened.json())
       }
     }
 
@@ -89,6 +105,7 @@ export default defineComponent({
       longUrlValid,
       shortUrlField,
       enableCustomUrl,
+      errorText,
       shorten,
       paste,
     }
